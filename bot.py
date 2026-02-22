@@ -32,7 +32,7 @@ async def on_ready():
 async def on_member_join(member):
     #manda no pv deste jeito member.send()
     canal_geral = discord.utils.get(member.guild.text_channels, name="geral")
-    await canal_geral.send(f"""Bem vindo {member.name} ao servidor singularidade rpg!
+    await canal_geral.send(f"""Bem vindo {member.name} ao servidor do rpg!
                            qualquer dúvida digite !comandos para a lista de comandos
                            vamos criar sua ficha digite !ficha para começar""")
 
@@ -92,10 +92,12 @@ async def aviso(guild,tipo):
 async def comandos(ctx):
     member = ctx.author
     await ctx.send(f"""{member.mention} a lista de comandos do bot é:
-                           !ficha ajuda na criação da ficha e se torne um jogador e ganhe o cargo
-                           !sair remove cargo de player(vc ainda pode participar no chat)
-                           !dia bot gera poll para o dia da sessão
-                           !comandos esta mensagem
+                   - comandos globais: 
+                   !comandos esta mensagem
+                   - comandos player:
+                   !sair remove cargo de player(vc ainda pode participar no chat)
+                   - comandos GM:        
+                   !dia bot gera poll para o dia da sessão
                            """)
 @bot.command()
 async def poll(ctx,*,pergunta):
