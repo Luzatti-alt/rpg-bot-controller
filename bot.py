@@ -68,16 +68,16 @@ async def virar_mestre(ctx):
     cargo_mestre = discord.utils.get(ctx.guild.roles, name=GM)
 
     if not cargo_mestre:
-        await ctx.send("Cargo Player não encontrado.")
+        await ctx.send("Cargo MESTRE não encontrado.")
         return
 
     if cargo_mestre in member.roles:
-        await ctx.send(f"{member.mention} você já é Player.")
+        await ctx.send(f"{member.mention} você já é MESTRE.")
         return
 
     try:
         await member.add_roles(cargo_mestre)
-        await ctx.send(f"{member.mention} agora é Player!")
+        await ctx.send(f"{member.mention} agora é MESTRE!")
     except discord.Forbidden:
         await ctx.send("Não tenho permissão para adicionar cargos.")
 
