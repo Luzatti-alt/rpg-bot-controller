@@ -118,9 +118,10 @@ async def sair(ctx):
 async def sair_erro(ctx,error):
     member = ctx.author
     #se nn tiver o cargo
-    if isinstance(error,comandos.MissingRole):
+    if isinstance(error,commands.MissingRole):
         await ctx.send(f"{member.mention} não é {player} então não pode sair da campanha")
 
 #rodar bot
 
-bot.run(token,log_handler=log,log_level=logging.DEBUG)
+bot.run(token)
+
