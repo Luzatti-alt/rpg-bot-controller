@@ -44,12 +44,23 @@ async def on_member_join(member):
 
 #para usuarios antigos do server se tornarem players
 @bot.command()
-async def virar_player(ctx,msg):
-    member = msg.author
-    cargo_player = discord.utils.get(member.guild.roles, name="Player")
-    await ctx.send(f"""
-    {member.name} foi promovida para Player
-    """)
+async def virar_player(ctx):
+    member = ctx.author
+    cargo_player = discord.utils.get(ctx.guild.roles, name=player)
+
+    if not cargo_player:
+        await ctx.send("Cargo Player não encontrado.")
+        return
+
+    if cargo_player in member.roles:
+        await ctx.send(f"{member.mention} você já é Player.")
+        return
+
+    try:
+        await member.add_roles(cargo_player)
+        await ctx.send(f"{member.mention} agora é Player!")
+    except discord.Forbidden:
+        await ctx.send("Não tenho permissão para adicionar cargos.")
 
 
 @bot.event
