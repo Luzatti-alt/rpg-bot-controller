@@ -1,0 +1,11 @@
+discord
+discord.py
+python-dotenv
+Pyside6
+PyOpenGL
+numpy
+flask
+Flask-Bcrypt  
+opencv-python
+PyAudio
+sockets
