@@ -62,6 +62,24 @@ async def virar_player(ctx):
     except discord.Forbidden:
         await ctx.send("Não tenho permissão para adicionar cargos.")
 
+@bot.command()
+async def virar_mestre(ctx):
+    member = ctx.author
+    cargo_mestre = discord.utils.get(ctx.guild.roles, name=GM)
+
+    if not cargo_mestre:
+        await ctx.send("Cargo Player não encontrado.")
+        return
+
+    if cargo_mestre in member.roles:
+        await ctx.send(f"{member.mention} você já é Player.")
+        return
+
+    try:
+        await member.add_roles(cargo_mestre)
+        await ctx.send(f"{member.mention} agora é Player!")
+    except discord.Forbidden:
+        await ctx.send("Não tenho permissão para adicionar cargos.")
 
 @bot.event
 #moderar mensagens
