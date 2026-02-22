@@ -10,17 +10,17 @@ from discord.ext import commands
 load_dotenv()
 token =os.getenv('DISCORD_BOT_TOKEN')
 
-#configurando bot
-log = logging.FileHandler(filename='bot.log',encoding='utf-8',mode='w')
+
 #intents(todas as permissoes via intents, temos que habilitar manualmente)
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 intents.presences = True
 
-#cargos
+#cargos(para realizar algo especifico)
 player = "Player"
 GM = "GM"
+
 #bot
 bot = commands.Bot(command_prefix='!',intents=intents,case_insensitive=True)#!comando -> intent
 @bot.event
@@ -32,9 +32,25 @@ async def on_ready():
 async def on_member_join(member):
     #manda no pv deste jeito member.send()
     canal_geral = discord.utils.get(member.guild.text_channels, name="geral")
-    await canal_geral.send(f"""Bem vindo {member.name} ao servidor do rpg!
+    cargo_player = discord.utils.get(member.guild.roles, name="Player")
+    
+    if cargo_player:
+        await member.add_roles(cargo_player)
+    await canal_geral.send(f"""
+                           Bem vindo {member.name} ao servidor do rpg!
                            qualquer dúvida digite !comandos para a lista de comandos
-                           vamos criar sua ficha digite !ficha para começar""")
+                           {member.name} foi promovida para Player
+    """)
+
+#para usuarios antigos do server se tornarem players
+@bot.command()
+async def virar_player(ctx,msg):
+    member = msg.author
+    cargo_player = discord.utils.get(member.guild.roles, name="Player")
+    await ctx.send(f"""
+    {member.name} foi promovida para Player
+    """)
+
 
 @bot.event
 #moderar mensagens
