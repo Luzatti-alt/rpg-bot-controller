@@ -24,9 +24,12 @@ GM = "GM"
 #bot
 bot = commands.Bot(command_prefix='!',intents=intents,case_insensitive=True)#!comando -> intent
 @bot.event
-#sempre que for on_ready é quando esta online
+#sempre que for on_ready é quando ele iniciar
 async def on_ready():
-    print(f"bot {bot.user.name} esta online")
+    for guild in bot.guilds:  # percorre todos os servidores
+        canal = discord.utils.get(guild.text_channels, name="geral")
+        if canal:
+            await canal.send("Bot esta online e foi atualizado!")
 
 @bot.event
 async def on_member_join(member):
@@ -42,7 +45,7 @@ async def on_member_join(member):
                            {member.name} foi promovida para Player
     """)
 
-#para usuarios antigos do server se tornarem players
+#para usuarios antigos do server se tornarem players/mestres
 @bot.command()
 async def virar_player(ctx):
     member = ctx.author
@@ -120,18 +123,6 @@ async def dia_erro(ctx,error):
         await ctx.add_reaction("✅")
         await ctx.add_reaction("❌")
 
-
-async def aviso(guild,tipo):
-    #manda no pv deste jeito member.send()
-    canal_geral = discord.utils.get(guild.text_channels, name="geral")
-    if tipo == "inicio":
-        await canal_geral.send(f"""Sessão prestes a iniciar""")
-    elif tipo == "fim":
-        await canal_geral.send(f"""Sessão finalizada""")
-    else:
-        await canal_geral.send(f"""aaaaa""")
-
-
 #comandos gerais
 @bot.command()
 async def comandos(ctx):
@@ -171,4 +162,3 @@ async def sair_erro(ctx,error):
 #rodar bot
 
 bot.run(token)
-
