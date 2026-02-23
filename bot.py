@@ -21,7 +21,7 @@ intents.presences = True
 player = "Player"
 GM = "GM"
 
-#bot
+#region configurando_bot
 bot = commands.Bot(command_prefix='!',intents=intents,case_insensitive=True)#!comando -> intent
 @bot.event
 #sempre que for on_ready é quando ele iniciar
@@ -44,6 +44,70 @@ async def on_member_join(member):
                            qualquer dúvida digite !comandos para a lista de comandos
                            {member.name} foi promovida para Player
     """)
+
+@bot.event
+#moderar mensagens(algumas como meme outras não)
+async def on_message(msg):#somente 1 parametro senão nn funciona
+    member = msg.author#tem que definir manualmente
+    #evitar auto reply
+    if msg.author == bot.user:
+        return
+    #piada
+    if "não vou participar da sessão" in msg.content.lower():
+        try:
+            await member.send("vai sim")
+            await msg.delete()
+            await msg.channel.send(f"{member.mention} confirmou que vai participar da sessão")
+        except:
+            print("algum erro")
+    await bot.process_commands(msg)#lidar com todas as outras mensagens
+
+#endregion configurando_bot
+#comando(ctx) ctx=contexto -> !comando
+
+#region Gm
+#comandos GM
+@bot.command()
+@commands.has_role(GM)
+async def dia(ctx,*,pergunta=None):#ja vai fazer a pegunta
+    embed = discord.Embed(title="Dia da sessão",description=f"Qual dia será a sessão\n\n Sábado\n Domingo\n Não posso esse fim de semana\n feriado(se tiver)")
+    votacao = await ctx.send(embed=embed)
+    await votacao.add_reaction("🔥")
+    await votacao.add_reaction("1️⃣")
+    await votacao.add_reaction("2️⃣")
+    await votacao.add_reaction("3️⃣")
+    await votacao.add_reaction("4️⃣")
+@dia.error
+async def dia_erro(ctx,error):
+    member = ctx.author
+    #se nn tiver o cargo
+    if isinstance(error,commands.MissingRole):
+        await ctx.send(f"{member.mention} não é um GM comando exclusivo para GM")
+        await ctx.add_reaction("✅")
+        await ctx.add_reaction("❌")
+#endregion Gm
+
+#region comandos_gerais
+#comandos gerais
+@bot.command()
+async def comandos(ctx):
+    member = ctx.author
+    await ctx.send(f"""{member.mention} a lista de comandos do bot é:
+                   - comandos globais: 
+                   !comandos mostra a lista de comandos
+                   !virar_player (mais para quem ja estava no server antes do bot) adicionar este cargo na tua conta
+                   !virar_mestre (mais para quem ja estava no server antes do bot) adicionar este cargo na tua conta
+                   - comandos player:
+                   !sair remove cargo de player(vc ainda pode participar no chat)
+                   - comandos GM:        
+                   !dia bot gera poll para o dia da sessão
+                           """)
+@bot.command()
+async def poll(ctx,*,pergunta):
+    embed = discord.Embed(title="Dia da sessão",description=pergunta)
+    votacao = await ctx.send(embed=embed)
+    await ctx.add_reaction("✅")
+    await ctx.add_reaction("❌")
 
 #para usuarios antigos do server se tornarem players/mestres
 @bot.command()
@@ -83,65 +147,9 @@ async def virar_mestre(ctx):
         await ctx.send(f"{member.mention} agora é MESTRE!")
     except discord.Forbidden:
         await ctx.send("Não tenho permissão para adicionar cargos.")
+#endregion comandos_gerais
 
-@bot.event
-#moderar mensagens
-async def on_message(msg):#somente 1 parametro senão nn funciona
-    member = msg.author#tem que definir manualmente
-    #evitar auto reply
-    if msg.author == bot.user:
-        return
-    #piada
-    if "não vou participar da sessão" in msg.content.lower():
-        try:
-            await member.send("vai sim")
-            await msg.delete()
-            await msg.channel.send(f"{member.mention} confirmou que vai participar da sessão")
-        except:
-            print("algum erro")
-    await bot.process_commands(msg)#lidar com todas as outras mensagens
-        
-#comando(ctx) ctx=contexto -> !comando
-
-#comandos GM
-@bot.command()
-@commands.has_role(GM)
-async def dia(ctx,*,pergunta=None):#ja vai fazer a pegunta
-    embed = discord.Embed(title="Dia da sessão",description=f"Qual dia será a sessão\n\n Sábado\n Domingo\n Não posso esse fim de semana\n feriado(se tiver)")
-    votacao = await ctx.send(embed=embed)
-    await votacao.add_reaction("🔥")
-    await votacao.add_reaction("1️⃣")
-    await votacao.add_reaction("2️⃣")
-    await votacao.add_reaction("3️⃣")
-    await votacao.add_reaction("4️⃣")
-@dia.error
-async def dia_erro(ctx,error):
-    member = ctx.author
-    #se nn tiver o cargo
-    if isinstance(error,commands.MissingRole):
-        await ctx.send(f"{member.mention} não é um GM comando exclusivo para GM")
-        await ctx.add_reaction("✅")
-        await ctx.add_reaction("❌")
-
-#comandos gerais
-@bot.command()
-async def comandos(ctx):
-    member = ctx.author
-    await ctx.send(f"""{member.mention} a lista de comandos do bot é:
-                   - comandos globais: 
-                   !comandos esta mensagem
-                   - comandos player:
-                   !sair remove cargo de player(vc ainda pode participar no chat)
-                   - comandos GM:        
-                   !dia bot gera poll para o dia da sessão
-                           """)
-@bot.command()
-async def poll(ctx,*,pergunta):
-    embed = discord.Embed(title="Dia da sessão",description=pergunta)
-    votacao = await ctx.send(embed=embed)
-    await ctx.add_reaction("✅")
-    await ctx.add_reaction("❌")
-
+#region player
 #comandos player
 @bot.command()
 @commands.has_role(player)
@@ -158,7 +166,6 @@ async def sair_erro(ctx,error):
     #se nn tiver o cargo
     if isinstance(error,commands.MissingRole):
         await ctx.send(f"{member.mention} não é {player} então não pode sair da campanha")
-
-#rodar bot
+#endregion player
 
 bot.run(token)
